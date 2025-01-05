@@ -7,7 +7,6 @@ import mongoose from 'mongoose'
 import path from 'path'
 import { DB_ADDRESS } from './config'
 import errorHandler from './middlewares/error-handler'
-import serveStatic from './middlewares/serverStatic'
 import routes from './routes'
 import limiter from './utils/limiter'
 
@@ -18,7 +17,7 @@ app.use(cookieParser())
 
 app.use(cors({ origin: ORIGIN_ALLOW, credentials: true }));
 
-app.use(serveStatic(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'public')))
 app.use(limiter);
 app.use(urlencoded({ extended: true }))
 app.use(json())
