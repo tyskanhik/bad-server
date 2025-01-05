@@ -30,6 +30,8 @@ export const getOrders = async (
             search,
         } = req.query
 
+        const normalizedLimit = Math.min(Number(limit), 10);
+
         const filters: FilterQuery<Partial<IOrder>> = {}
 
         if (status) {
@@ -120,7 +122,7 @@ export const getOrders = async (
         aggregatePipeline.push(
             { $sort: sort },
             { $skip: (Number(page) - 1) * Number(limit) },
-            { $limit: Number(limit) },
+            { $limit: normalizedLimit },
             {
                 $group: {
                     _id: '$_id',
