@@ -26,7 +26,7 @@ export const uploadFile = async (
 
         return res.status(constants.HTTP_STATUS_CREATED).send({
             fileName,
-            originalName: sanitizedFileName, // Если вам нужно вернуть очищенное имя
+            originalName: sanitizedFileName,
         });
     } catch (error) {
         return next(error);
