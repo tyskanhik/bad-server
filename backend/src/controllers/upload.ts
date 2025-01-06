@@ -19,10 +19,10 @@ export const uploadFile = async (
     }
     try {
         const sanitizedFileName = sanitizeFileName(req.file.filename);
-        
+
         const fileName = process.env.UPLOAD_PATH
-            ? `/${process.env.UPLOAD_PATH}/${sanitizedFileName}`
-            : `/${sanitizedFileName}`;
+            ? `/${process.env.UPLOAD_PATH}/${req.file.filename}`
+            : `/${req.file.filename}`;
 
         return res.status(constants.HTTP_STATUS_CREATED).send({
             fileName,
