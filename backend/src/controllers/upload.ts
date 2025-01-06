@@ -1,13 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import { constants } from 'http2'
-// import path from 'path';
+import fs from 'node:fs/promises'
+import { allowedTypes } from '../middlewares/file';
 import BadRequestError from '../errors/bad-request-error'
-
-
-// const sanitizeFileName = (fileName: string) => {
-//     const baseName = path.basename(fileName);
-//     return baseName.replace(/[<>:"/\\|?*]/g, '');
-// };
 
 export const uploadFile = async (
     req: Request,
@@ -17,9 +12,18 @@ export const uploadFile = async (
     if (!req.file) {
         return next(new BadRequestError('Файл не загружен'));
     }
+
+    if (req.file.size < 2048) {
+        await fs.unlink(req.file.path)
+        return next(new BadRequestError('Размер файла слишком мал'))
+    }
+    
+    if (!allowedTypes.includes(req.file.mimetype)) {
+        await fs.unlink(req.file.path);
+        return next(new BadRequestError('Неверный тип файла'));
+    }
+
     try {
-        // const sanitizedFileName = sanitizeFileName(req.file.filename);
-        
         const fileName = process.env.UPLOAD_PATH
             ? `/${process.env.UPLOAD_PATH}/${req.file.filename}`
             : `/${req.file.filename}`;
