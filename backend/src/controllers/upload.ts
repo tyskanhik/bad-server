@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { constants } from 'http2'
-import path from 'path';
+import path, { extname } from 'path';
+import { faker } from '@faker-js/faker';
 import BadRequestError from '../errors/bad-request-error'
 
 
@@ -19,13 +20,14 @@ export const uploadFile = async (
     }
     try {
         const sanitizedFileName = sanitizeFileName(req.file.filename);
-
-        const fileName = process.env.UPLOAD_PATH
-            ? `/${process.env.UPLOAD_PATH}/${req.file.filename}`
-            : `/${req.file.filename}`;
+        const uniqueName = faker.string.uuid().concat(extname(req.file.filename));
+        
+        // const fileName = process.env.UPLOAD_PATH
+        //     ? `/${process.env.UPLOAD_PATH}/${req.file.filename}`
+        //     : `/${req.file.filename}`;
 
         return res.status(constants.HTTP_STATUS_CREATED).send({
-            fileName,
+            fileName: uniqueName,
             originalName: sanitizedFileName,
         });
     } catch (error) {
