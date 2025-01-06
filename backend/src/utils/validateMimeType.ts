@@ -13,8 +13,8 @@ export const validateMimeType = async (filePath: string): Promise<string | null>
     await fileHandle.read(buffer, 0, buffer.length, 0);
     await fileHandle.close();
 
-    const foundMimeType = Object.entries(mimeTypeSignatures).find(([, signature]) => 
-        buffer.subarray(0, signature.length).equals(signature)
+    const foundMimeType = Object.entries(mimeTypeSignatures).find(([_mime, signature]) => 
+        buffer.slice(0, signature.length).equals(signature)
     );
 
     if (foundMimeType) {
