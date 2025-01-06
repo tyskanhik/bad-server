@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { constants } from 'http2'
 import fs from 'node:fs/promises'
+import { validateMimeType } from '../utils/validateMimeType';
 import { allowedTypes } from '../middlewares/file';
 import BadRequestError from '../errors/bad-request-error'
 
@@ -18,9 +19,10 @@ export const uploadFile = async (
         return next(new BadRequestError('Размер файла слишком мал'))
     }
     
-    if (!allowedTypes.includes(req.file.mimetype)) {
+    const mimeType = await validateMimeType(req.file.path);
+    if (!mimeType || !allowedTypes.includes(mimeType)) {
         await fs.unlink(req.file.path);
-        return next(new BadRequestError('Неверный тип файла'));
+        return next(new BadRequestError('Неверный формат файла'));
     }
 
     try {
@@ -38,3 +40,4 @@ export const uploadFile = async (
 };
 
 export default {}
+
